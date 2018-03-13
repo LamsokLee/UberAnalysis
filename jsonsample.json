@@ -1,0 +1,26 @@
+{
+  "destination_addresses": [
+    "1001-1011 6th Ave, New York, NY 10018, USA"
+  ],
+  "origin_addresses": [
+    "1211-1215 1st Avenue, New York, NY 10065, USA"
+  ],
+  "rows": [
+    {
+      "elements": [
+        {
+          "distance": {
+            "text": "2.4 mi",
+            "value": 3787
+          },
+          "duration": {
+            "text": "18 mins",
+            "value": 1099
+          },
+          "status": "OK"
+        }
+      ]
+    }
+  ],
+  "status": "OK"
+}
