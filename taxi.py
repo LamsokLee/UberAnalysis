@@ -148,6 +148,14 @@ def calDif(trip):
             trip.append(disDif)
 
 
+def coverage(distanceData, radius=0.005):
+    sum = 0
+    for trip in distanceData:
+        if trip[7] <= radius and trip[8] <= radius:
+            sum += 1
+    return float(sum) / float(len(distanceData))
+
+
 #
 # def showPlot(xdata,ydata,title = 'N/A'):
 #     import numpy as np
@@ -167,7 +175,7 @@ data = openfile(filename, 100000, cab='green')
 stations = openStation(filename='data/subway.csv')
 distanceData = nearestSub(data, stations)
 # Calculate the coverage
-
+coverage(distanceData, radius=0.006)
 # Calculate the distance
 laziness(distanceData)
 
