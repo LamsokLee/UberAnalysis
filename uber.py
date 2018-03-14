@@ -70,7 +70,6 @@ def dayPlot(month, mon):
         plt.title('Trips Frequency by time in ' + months[month])
         plt.show()
 
-d
 data = readfile('raw_uber_data_urls.txt')
 mon = timeRange(data)
 for i in range(12):
