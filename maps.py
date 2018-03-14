@@ -4,11 +4,16 @@ from config import *
 
 gmaps.configure(api_key=API_Gmaps)
 
-def writeCSV(list, filename, radius = 0.005):
+
+def writeCSV(list, filename):
     """Write the list to csv file."""
     with open(filename, "w") as file:
-        for lines in list:
-            if lines[-2] <= radius and lines[-1] <= radius:
-                file.write(str(lines[2])+","+str(lines[3])+"\n")
-
+        for row in list:
+            for i in range(len(row)):
+                file.write(str(row[i]))
+                if i != len(row) - 1:
+                    file.write(",")
+                else:
+                    file.write("\n")
     return
+

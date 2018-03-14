@@ -60,9 +60,9 @@ def dayPlot(month, mon):
     for i in range(24):
         sum = sum + ydata[i]
     if sum != 0:
-        percentage = [float(i) / float(sum) for i in ydata]
-        objects = tuple(hours)
-        y_pos = np.arange(len(objects))
+        percentage = [float(i) / float(sum) for i in ydata] # y axis value
+        objects = tuple(hours) # x axis value
+        y_pos = np.arange(len(objects)) # x axis names
         plt.bar(y_pos, percentage, align='center', alpha=0.5)
         plt.ylim(0, 0.09)
         plt.xticks(y_pos, objects, rotation=90)
