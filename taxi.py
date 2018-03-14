@@ -9,33 +9,65 @@ from subway import *
 
 
 # Open yellow cab file
-def openfile(filename, limit=1000000):
+def openfile(filename, limit=1000000, cab='yellow'):
     file = open(filename)
     data = []
     count = 0
     file.next()
     file.next()
-    for i in file:
-        trip = i.split(',')
-        if (float(trip[5]) != 0. and float(trip[6]) and float(trip[9]) and float(trip[10])):
-            # PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance, PUDisToSub, DODisToSub, tipRate, avgSpeed
-            PUTime = datetime.datetime.strptime(trip[1], '%Y-%m-%d %H:%M:%S')  # 2014-04-08 08:59:39
-            DOTime = datetime.datetime.strptime(trip[2], '%Y-%m-%d %H:%M:%S')
-            PULat = float(trip[6])
-            PULng = float(trip[5])
-            DOLat = float(trip[10])
-            DOLng = float(trip[9])
-            Distance = float(trip[4]) * 1.61  # in metric, unit: km
-            PUDisToSub = -1.
-            DODisToSub = -1.
-            tipRate = float(trip[-3]) / float(trip[-1])
-            totalTime = (DOTime - PUTime).seconds / 3600. # in hour
-            avgSpeed = Distance / totalTime
-            data.append([PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance, PUDisToSub, DODisToSub, tipRate, totalTime,
-                        avgSpeed])
-        count += 1
-        if count > limit:
-            break
+    if cab == 'yellow':
+        for i in file:
+            trip = i.split(',')
+            if (float(trip[5]) != 0. and float(trip[6]) != 0 and float(trip[9]) != 0 and float(trip[10]) != 0):
+                # PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance, PUDisToSub, DODisToSub, tipRate, avgSpeed
+                PUTime = datetime.datetime.strptime(trip[1], '%Y-%m-%d %H:%M:%S')  # 2014-04-08 08:59:39
+                DOTime = datetime.datetime.strptime(trip[2], '%Y-%m-%d %H:%M:%S')
+                PULat = float(trip[6])
+                PULng = float(trip[5])
+                DOLat = float(trip[10])
+                DOLng = float(trip[9])
+                Distance = float(trip[4]) * 1.61  # in metric, unit: km
+                PUDisToSub = -1.
+                DODisToSub = -1.
+                tipRate = float(trip[-3]) / float(trip[-1])
+                totalTime = (DOTime - PUTime).seconds / 3600.  # in hour
+                avgSpeed = Distance / totalTime
+                data.append(
+                    [PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance, PUDisToSub, DODisToSub, tipRate, totalTime,
+                     avgSpeed])
+            count += 1
+            if count > limit:
+                break
+    # VendorID,lpep_pickup_datetime,Lpep_dropoff_datetime,Store_and_fwd_flag,RateCodeID,Pickup_longitude,Pickup_latitude,Dropoff_longitude,Dropoff_latitude,Passenger_count,Trip_distance,Fare_amount,Extra,MTA_tax,Tip_amount,Tolls_amount,Ehail_fee,Total_amount,Payment_type,Trip_type
+    else:
+        file.next()
+        for i in file:
+            trip = i.split(',')
+            if (float(trip[5]) != 0. and float(trip[6]) != 0 and float(trip[7]) != 0 and float(trip[8]) != 0):
+                PUTime = datetime.datetime.strptime(trip[1], '%Y-%m-%d %H:%M:%S')  # 4/1/14 0:00
+                DOTime = datetime.datetime.strptime(trip[2], '%Y-%m-%d %H:%M:%S')
+                PULat = float(trip[6])
+                PULng = float(trip[5])
+                DOLat = float(trip[8])
+                DOLng = float(trip[7])
+                Distance = float(trip[10]) * 1.61  # in metric, unit: km
+                PUDisToSub = -1.
+                DODisToSub = -1.
+                if float(trip[17]) == 0.:
+                    tipRate = 0.
+                else:
+                    tipRate = float(trip[14]) / float(trip[17])
+                totalTime = (DOTime - PUTime).seconds / 3600.  # in hour
+                if totalTime == 0:
+                    avgSpeed = 0.
+                else:
+                    avgSpeed = Distance / totalTime
+                data.append(
+                    [PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance, PUDisToSub, DODisToSub, tipRate, totalTime,
+                     avgSpeed])
+            count += 1
+            if count > limit:
+                break
     return data
 
 
@@ -115,6 +147,7 @@ def calDif(trip):
             trip.append(timeDif)
             trip.append(disDif)
 
+
 #
 # def showPlot(xdata,ydata,title = 'N/A'):
 #     import numpy as np
@@ -128,12 +161,14 @@ def calDif(trip):
 #     plt.title(title)
 #     plt.show()
 
-# else:
-# Wait for secs
-filename = 'data/yellow_tripdata_2014-04.csv'
-data = openfile(filename, 10000)
+
+filename = 'data/green_tripdata_2014-04.csv'
+data = openfile(filename, 100000, cab='green')
 stations = openStation(filename='data/subway.csv')
 distanceData = nearestSub(data, stations)
+# Calculate the coverage
+
+# Calculate the distance
 laziness(distanceData)
 
 fig = plotData(distanceData, radius=0.005)

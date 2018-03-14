@@ -16,4 +16,3 @@ def writeCSV(list, filename):
                 else:
                     file.write("\n")
     return
-
