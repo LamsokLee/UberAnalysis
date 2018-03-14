@@ -4,17 +4,19 @@ import requests
 
 from config import *
 
+
 # Store all the stations into list
-file = open('data/subway.csv')
-file.next()
-stations = []  # Lat, Lng
-for line in file:
-    data = line.split(',')
-    stations.append([float(data[28]), float(data[29])])
-stations.sort()
+def openStation(filename='data/subway.csv'):
+    file = open(filename)
+    file.next()
+    stations = []  # Lat, Lng
+    for line in file:
+        temp = line.split(',')
+        stations.append([float(temp[28]), float(temp[29])])
+    return stations
 
 
-def isNearby(Lat, Lng, radius=0.005):
+def isNearby(Lat, Lng, stations, radius=0.005):
     LatRange = (Lat - radius, Lat + radius)
     LngRange = (Lng - radius, Lng + radius)
     for station in stations:
