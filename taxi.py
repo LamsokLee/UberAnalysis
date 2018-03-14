@@ -178,5 +178,7 @@ distanceData = nearestSub(data, stations)
 coverage(distanceData, radius=0.006)
 # Calculate the distance
 laziness(distanceData)
+# Calculate the frequent route
+stationFrequency(distanceData, radius = 0.005)
 
 fig = plotData(distanceData, radius=0.005)
