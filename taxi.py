@@ -1,31 +1,45 @@
 import json, requests, datetime
-
-APIKey = 'AIzaSyDfm2e-u_gX1LWaZiLf_PrReCR51ddHpB8'
+from config import *
+from subway import *
+filename = 'data/yellow_tripdata_2014-04.csv'
 
 
 # Open yellow cab file
-def openfile(filename):
+def openfile(filename, limit=1000000):
     file = open(filename)
     data = []
-    # length = len(file.readlines())
     count = 0
-    # file = open(filename)
     file.next()
     file.next()
     for i in file:
         trip = i.split(',')
         # PUTime, DOTime, PULat, PULng, DOLat, DOLng, Distance
-        data.append([trip[1], trip[2], trip[6], trip[5], trip[10], trip[9], trip[4]])
+        data.append([trip[1], trip[2], float(trip[6]), float(trip[5]), float(trip[10]), float(trip[9]), float(trip[4])])
         count += 1
-        # print str(float(count) / float(length) * 100) + '%'
-        if count > 50000:
+        if count > limit:
             break
     return data
 
+def useSubway(data,radius):
+    sum = 0
+    for trip in data:
+        if isNearby(trip[2], trip[3], radius = radius) and isNearby(trip[4], trip[5], radius = radius):
+            sum += 1
+    return float(sum)/float(len(data))
+
+def radiusStep(step = 0.001,radius = 0.005):
+    curRadius = 0
+    res = []
+    while curRadius <= radius:
+        print('Calculate radius = ' + str(curRadius))
+        res.append([curRadius,useSubway(data,curRadius)])
+        curRadius += step
+    return res
 
 def calDif(trip):
+    # origins = Lat,Lng
     URL = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' + trip[2] + ',' + trip[
-        3] + '&destinations=' + trip[4] + ',' + trip[5] + '&key=' + APIKey
+        3] + '&destinations=' + trip[4] + ',' + trip[5] + '&key=' + API_Distance
     response = requests.get(URL)
     if response.status_code == 200:
         jsonfile = json.loads(response.content)
@@ -39,6 +53,7 @@ def calDif(trip):
             disDif = actDis - estDis
             trip.append(timeDif)
             trip.append(disDif)
+
 
 # else:
 # Wait for secs
